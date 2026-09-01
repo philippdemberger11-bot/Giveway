@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giveaway</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+        }
+        .container {
+            background: #121212;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(255,255,255,0.05);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        h1 {
+            margin-top: 0;
+            color: #ffffff;
+            font-size: 26px;
+        }
+        .countdown-box {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid #333;
+        }
+        .countdown-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff4d4d;
+        }
+        .vote-section {
+            margin-bottom: 10px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444;
+            background-color: #1e1e1e;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .input-group input:disabled {
+            background-color: #151515;
+            color: #666;
+            border-color: #2a2a2a;
+            cursor: not-allowed;
+        }
+        .input-group input::placeholder {
+            color: #777;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .option-btn {
+            background: #1e1e1e;
+            border: 2px solid #444;
+            color: #fff;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: #888;
+            background-color: #2a2a2a;
+        }
+        .option-btn.selected {
+            border-color: #ffffff;
+            background-color: #333333;
+            color: #ffffff;
+        }
+        .option-btn:disabled {
+            background-color: #151515;
+            color: #555;
+            border-color: #222;
+            cursor: not-allowed;
+        }
+        .submit-btn {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover:not(:disabled) {
+            background: #cccccc;
+        }
+        .submit-btn:disabled {
+            background: #333333;
+            color: #777777;
+            cursor: not-allowed;
+        }
+        .participants-box {
+            margin-top: 25px;
+            text-align: left;
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #333;
+        }
+        .participants-header {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .participant-count {
+            background: #333;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .participants-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .participants-list li {
+            padding: 6px 10px;
+            background: #242424;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #bbb;
+            display: flex;
+            align-items: center;
+        }
+        .participants-list li::before {
+            content: "•";
+            color: #4da6ff;
+            font-weight: bold;
+            display: inline-block;
+            width: 12px;
+        }
+        .empty-list-msg {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .winners-box {
+            display: none;
+            background: #1e1e1e;
+            border: 2px solid #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .winners-box h2 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        .winners-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+        }
+        .winners-list li {
+            padding: 10px;
+            background: #2a2a2a;
+            margin: 6px 0;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #ffffff;
+            border: 1px solid #444;
+        }
+        .status-msg {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #4da6ff;
+            font-weight: 600;
+        }
+        .admin-reset-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: #222222;
+            font-size: 11px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .admin-reset-btn:hover {
+            color: #ff4d4d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Giveaway</h1>
+
+    <!-- Countdown Section -->
+    <div class="countdown-box">
+        <div class="countdown-title">Giveaway Ends Next Friday</div>
+        <div class="timer" id="timer">Loading...</div>
+    </div>
+
+    <!-- Voting Form -->
+    <div class="vote-section" id="votingArea">
+        <div class="input-group">
+            <label for="username">Discord Username:</label>
+            <input type="text" id="username" placeholder="Enter your Discord username (e.g. user#1234)">
+        </div>
+
+        <div class="input-group">
+            <label>Select Option:</label>
+            <div class="options">
+                <button type="button" class="option-btn" id="optionBtn" onclick="selectOption(this, 'Giveaway')">
+                    Giveaway
+                </button>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitVote()">Submit Entry</button>
+        <div class="status-msg" id="statusMsg"></div>
+
+        <!-- Participants Section -->
+        <div class="participants-box">
+            <div class="participants-header">
+                <span>Participants</span>
+                <span class="participant-count" id="participantCount">0</span>
+            </div>
+            <ul class="participants-list" id="participantsList">
+                <li class="empty-list-msg" id="emptyMsg">No participants yet.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Winners Section (Revealed when countdown ends) -->
+    <div class="winners-box" id="winnersArea">
+        <h2>🎉 Winners 🎉</h2>
+        <p>The giveaway has ended! Here are the 3 randomly drawn winners:</p>
+        <ul class="winners-list" id="winnersList"></ul>
+    </div>
+</div>
+
+<button class="admin-reset-btn" onclick="resetGiveaway()">⚙️ Reset Giveaway</button>
+
+<script>
+    // AUTO RESET FOR NEW VERSION (v13): Clears test participants automaticially on load
+    if (localStorage.getItem('giveaway_version') !== 'v13') {
+        localStorage.removeItem('participants');
+        localStorage.removeItem('has_entered_giveaway');
+        localStorage.setItem('giveaway_version', 'v13');
+    }
+
+    function getNextFriday() {
+        let now = new Date();
+        let target = new Date();
+        let dayOfWeek = now.getDay();
+        let daysUntilFriday = (5 - dayOfWeek + 7) % 7;
+        
+        if (daysUntilFriday === 0 && now.getHours() >= 23 && now.getMinutes() >= 59) {
+            daysUntilFriday = 7;
+        }
+
+        target.setDate(now.getDate() + daysUntilFriday);
+        target.setHours(23, 59, 59, 999);
+        return target.getTime();
+    }
+
+    let targetTime = localStorage.getItem('voting_target_time');
+    if (!targetTime) {
+        targetTime = getNextFriday();
+        localStorage.setItem('voting_target_time', targetTime);
+    } else {
+        targetTime = parseInt(targetTime);
+    }
+
+    let selectedChoice = null;
+
+    function selectOption(btn, choice) {
+        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedChoice = choice;
+    }
+
+    function renderParticipants() {
+        let participants = JSON.parse(localStorage.getItem('participants') || '[]');
+        let listEl = document.getElementById('participantsList');
+        let countEl = document.getElementById('participantCount');
+
+        countEl.innerText = participants.length;
+        listEl.innerHTML = '';
+
+        if (participants.length === 0) {
+            listEl.innerHTML = '<li class="empty-list-msg">No participants yet.</li>';
+            return;
+        }
+
+        participants.forEach((p) => {
+            let li = document.createElement('li');
+            li.innerText = p.name;
+            listEl.appendChild(li);
+        });
+    }
+
+    function checkUserStatus() {
+        let hasEntered = localStorage.getItem('has_entered_giveaway');
+        if (hasEntered) {
+            let nameInput = document.getElementById('username');
+            let submitBtn = document.getElementById('submitBtn');
+            let optionBtn = document.getElementById('optionBtn');
+
+            nameInput.disabled = true;
+            nameInput.placeholder = "Already entered";
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Already Entered";
+            optionBtn.disabled = true;
+
+            document.getElementById('statusMsg').innerText = "You have already participated on this device.";
+        }
+    }
+
+    function submitVote() {
+        if (localStorage.getItem('has_entered_giveaway')) {
+            alert('You have already submitted an entry!');
+            return;
+        }
+
+        let nameInput = document.getElementById('username');
+        let name = nameInput.value.trim();
+
+        if (!name) {
+            alert('Please enter your Discord username!');
+            return;
+        }
+        if (!selectedChoice) {
+            alert('Please select Giveaway to enter!');
+            return;
+        }
+
+        let participants = JSON.parse(localStorage.getItem('participants') || '[]');
+        participants.push({ name: name, vote: selectedChoice });
+        localStorage.setItem('participants', JSON.stringify(participants));
+        localStorage.setItem('has_entered_giveaway', 'true');
+
+        selectedChoice = null;
+        renderParticipants();
+        checkUserStatus();
+    }
+
+    let timerInterval = setInterval(function() {
+        let now = new Date().getTime();
+        let distance = targetTime - now;
+
+        if (distance < 0) {
+            clearInterval(timerInterval);
+            document.getElementById('timer').innerText = "GIVEAWAY CLOSED";
+            endVoting();
+            return;
+        }
+
+        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById('timer').innerText = 
+            `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+
+    function endVoting() {
+        document.getElementById('votingArea').style.display = 'none';
+        document.getElementById('winnersArea').style.display = 'block';
+
+        let winnersList = document.getElementById('winnersList');
+        winnersList.innerHTML = '';
+
+        let participants = JSON.parse(localStorage.getItem('participants') || '[]');
+
+        if (participants.length === 0) {
+            winnersList.innerHTML = '<li>No participants entered.</li>';
+            return;
+        }
+
+        let shuffled = participants.sort(() => 0.5 - Math.random());
+        let winners = shuffled.slice(0, 3);
+
+        winners.forEach(winner => {
+            let li = document.createElement('li');
+            li.innerText = winner.name;
+            winnersList.appendChild(li);
+        });
+    }
+
+    function resetGiveaway() {
+        let confirmReset = confirm("Are you sure you want to reset the giveaway?\nAll participants will be deleted.");
+        if (confirmReset) {
+            localStorage.removeItem('participants');
+            localStorage.removeItem('has_entered_giveaway');
+            localStorage.removeItem('voting_target_time');
+            alert("The giveaway has been successfully reset!");
+            location.reload();
+        }
+    }
+
+    renderParticipants();
+    checkUserStatus();
+
+    if (new Date().getTime() >= targetTime) {
+        clearInterval(timerInterval);
+        document.getElementById('timer').innerText = "GIVEAWAY CLOSED";
+        endVoting();
+    }
+</script>
+
+</body>
+</html>
